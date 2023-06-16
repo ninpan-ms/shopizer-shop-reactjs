@@ -1,0 +1,47 @@
+name: Deploy shopizer-shop react app
+
+on: workflow_dispatch
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 12
+      
+      - name: Node version
+        run: node --version
+        
+      - name: NPM version
+        run: npm --version
+
+      - name: Install dependencies using npm
+        run: npm install
+      
+      - name: Build with npm
+        run: npm run build
+      
+      - name: Azure CLI Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy apps/shopizer-shop-reactorjs
+        uses: azure/spring-apps-deploy@v1
+        with:
+          azure-subscription: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+          action: deploy
+          service-name: ${{ vars.SPRING_APPS_SERVICE_NAME }}
+          app-name: ${{ vars.SPRING_APPS_APP_NAME }}
+          use-staging-deployment: false
+          package: ${{ github.workspace }}/build
+          build-env: "-BP_WEB_SERVER nginx -BP_WEB_SERVER_ROOT . -BP_WEB_SERVER_ENABLE_PUSH_STATE true -BP_NODE_VERSION 16.*"
+            
+      
+      
