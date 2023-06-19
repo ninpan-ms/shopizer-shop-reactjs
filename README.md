@@ -26,7 +26,7 @@ docker build . -t shopizerecomm/shopizer-shop:latest
 
 docker run \
 -e "APP_MERCHANT=DEFAULT" \
--e "APP_BASE_URL=http://localhost:8080" \
+-e "APP_BASE_URL=https://shopizer.net" \
 -it --rm -p 80:80 shopizerecomm/shopizer-shop-reactjs
 
 http://localhost
